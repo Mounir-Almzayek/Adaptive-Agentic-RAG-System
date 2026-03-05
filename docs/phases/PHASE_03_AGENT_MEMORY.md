@@ -59,12 +59,12 @@
 
 ## Acceptance Criteria
 
-- [ ] ConversationMemory correctly stores and returns last N turns.
-- [ ] ToolRegistry allows registering and retrieving tools.
-- [ ] Agent is created with model_factory LLM and registry tools.
-- [ ] Agent run accepts query + context + knowledge_docs and returns a response.
-- [ ] At least one tool (e.g. calculator or search_knowledge stub) is registered and callable by the agent.
-- [ ] Design allows adding MCP-wrapped tools later without changing agent_factory signature.
+- [x] ConversationMemory correctly stores and returns last N turns.
+- [x] ToolRegistry allows registering and retrieving tools (and register_from_mcp for MCP later).
+- [x] Agent is created with model_factory LLM and registry tools (create_agent).
+- [x] Agent run accepts query + context + knowledge_docs and returns a response (agent.invoke).
+- [x] At least one tool (calculator, search_knowledge stub) is registered and callable by the agent.
+- [x] Design allows adding MCP-wrapped tools later without changing agent_factory signature.
 
 ---
 
