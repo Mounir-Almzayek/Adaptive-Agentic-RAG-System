@@ -90,12 +90,12 @@ Root of repo also contains: `README.md`, `requirements.txt` or `pyproject.toml`,
 
 ## Acceptance Criteria
 
-- [ ] All directories and `__init__.py` files exist.
-- [ ] `config/settings.py` loads from env and validates required keys.
-- [ ] `core/model_factory.py` returns a LangChain chat model that works with OpenRouter.
-- [ ] Smoke test passes when `OPENROUTER_API_KEY` is set.
-- [ ] `.env.example` is present and documented.
-- [ ] No API keys in code; all from env.
+- [x] All directories and `__init__.py` files exist.
+- [x] `config/settings.py` loads from env and validates required keys.
+- [x] `core/model_factory.py` returns a LangChain chat model that works with OpenRouter.
+- [x] Smoke test passes when `OPENROUTER_API_KEY` is set (see `tests/test_model_factory.py` -m smoke and `scripts/smoke_llm.py`).
+- [x] `.env.example` is present and documented.
+- [x] No API keys in code; all from env.
 
 ---
 

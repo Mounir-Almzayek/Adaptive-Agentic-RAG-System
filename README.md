@@ -43,6 +43,17 @@ adaptive_rag/
 
 ## Status
 
-**Current phase:** Planning and documentation. No implementation yet.
+**Phase 1 (Foundation)** — Done. Config, model factory (OpenRouter + LangChain), and tests in place.
 
-Next step: Review docs, then start **Phase 1 – Foundation**.
+### Run tests (from repo root)
+
+```bash
+# Unit tests (no API key required for provider/key validation tests)
+PYTHONPATH=. python -m pytest tests/ -v -m unit
+
+# Smoke test (requires OPENROUTER_API_KEY in .env)
+PYTHONPATH=. python -m pytest tests/ -v -m smoke
+# Or: PYTHONPATH=. python scripts/smoke_llm.py
+```
+
+Next: **Phase 2 – RAG Core** and/or **Phase 3 – Agent & Memory**.
