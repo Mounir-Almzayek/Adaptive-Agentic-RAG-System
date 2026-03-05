@@ -3,14 +3,31 @@ Application settings with env-based configuration and validation.
 
 Uses pydantic-settings for loading from environment and .env file.
 All secrets (e.g. API keys) must be supplied via env; never hardcoded.
+The .env path is resolved relative to the project root (where pyproject.toml is)
+so it works regardless of current working directory (e.g. when running Streamlit).
 """
 
 from functools import lru_cache
+from pathlib import Path
 from typing import Literal
 
 from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+
+def _resolve_env_path() -> str:
+    """Resolve .env path to project root so CWD does not matter."""
+    p = Path(__file__).resolve().parent  # .../adaptive_rag/config
+    for _ in range(5):
+        if (p / "pyproject.toml").exists():
+            return str(p / ".env")
+        if (p / ".env").exists():
+            return str(p / ".env")
+        p = p.parent
+    return ".env"
+
+
+_ENV_FILE = _resolve_env_path()
 
 RetrievalStrategy = Literal["vector", "hybrid", "adaptive"]
 
@@ -19,7 +36,7 @@ class Settings(BaseSettings):
     """Validated application configuration loaded from environment."""
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=_ENV_FILE,
         env_file_encoding="utf-8",
         extra="ignore",
         case_sensitive=False,

@@ -1,20 +1,29 @@
 """
 Vector store abstraction for the Adaptive Agentic RAG System.
 
-Wraps LangChain Chroma with a stable interface: add_documents, vector_search,
-and hybrid_search. Persistence and embedding are configured at construction.
+Uses Chroma when available; falls back to FAISS on Python 3.14 (where Chroma fails).
+Same interface: add_documents, vector_search, hybrid_search.
 """
 
 from __future__ import annotations
 
-from typing import Protocol
+from pathlib import Path
+from typing import Any, Protocol
 
 from langchain_core.documents import Document
 from langchain_core.embeddings import Embeddings
-from langchain_chroma import Chroma
 
 # Default collection name; can be overridden for multi-tenant or multi-index scenarios.
 DEFAULT_COLLECTION_NAME = "adaptive_rag"
+
+
+def _chroma_available() -> bool:
+    """Return True if Chroma can be imported (fails on Python 3.14 due to chromadb/pydantic)."""
+    try:
+        import chromadb  # noqa: F401
+        return True
+    except Exception:
+        return False
 
 
 class VectorStoreProtocol(Protocol):
@@ -29,11 +38,10 @@ class VectorStoreProtocol(Protocol):
 
 class VectorStore:
     """
-    LangChain Chroma-backed vector store with vector and hybrid-style retrieval.
+    Unified vector store: Chroma when available, otherwise FAISS (Python 3.14 compatible).
 
-    Hybrid search is implemented as a broader vector search (2x top_k) then
-    trimmed to top_k, so fallback in adaptive retrieval has more candidates.
-    Full BM25 + vector fusion can be added later via a separate retriever.
+    Same interface: add_documents, vector_search, hybrid_search. Hybrid is implemented
+    as broader vector search then trim. Persistence path is used for Chroma or FAISS save/load.
     """
 
     def __init__(
@@ -45,35 +53,72 @@ class VectorStore:
         self._embedding = embedding
         self._persist_directory = persist_directory
         self._collection_name = collection_name
+        self._store: Any = None
+        self._use_faiss = not _chroma_available()
+        if self._use_faiss:
+            self._init_faiss()
+        else:
+            self._init_chroma()
+
+    def _init_chroma(self) -> None:
+        from langchain_chroma import Chroma
+
         self._store = Chroma(
-            collection_name=collection_name,
-            embedding_function=embedding,
-            persist_directory=persist_directory,
+            collection_name=self._collection_name,
+            embedding_function=self._embedding,
+            persist_directory=self._persist_directory,
         )
+
+    def _init_faiss(self) -> None:
+        from langchain_community.vectorstores import FAISS
+
+        path = Path(self._persist_directory)
+        index_file = path / "index.faiss"
+        if index_file.exists():
+            self._store = FAISS.load_local(
+                str(path),
+                self._embedding,
+                allow_dangerous_deserialization=True,
+            )
+        else:
+            path.mkdir(parents=True, exist_ok=True)
+            self._store = FAISS.from_documents(
+                [Document(page_content=" ", metadata={"__placeholder": True})],
+                self._embedding,
+            )
+            self._store.save_local(
+                self._persist_directory,
+                index_name="index",
+            )
 
     def add_documents(self, documents: list[Document]) -> list[str] | None:
         """Embed and add documents to the store. Returns IDs if available."""
         if not documents:
             return []
-        ids = self._store.add_documents(documents)
-        return ids
+        if self._use_faiss:
+            self._store.add_documents(documents)
+            self._store.save_local(self._persist_directory, index_name="index")
+            return None
+        return self._store.add_documents(documents)
 
     def vector_search(self, query: str, top_k: int = 5) -> list[Document]:
         """Return the top_k most similar documents to the query (dense only)."""
-        return self._store.similarity_search(query, k=top_k)
+        docs = self._store.similarity_search(query, k=top_k)
+        if self._use_faiss:
+            docs = [d for d in docs if not d.metadata.get("__placeholder")]
+        return docs
 
     def hybrid_search(self, query: str, top_k: int = 5) -> list[Document]:
         """
         Broader retrieval: fetch more candidates via vector search, then return top_k.
-
-        This gives adaptive retrieval a fallback with more coverage when vector-only
-        returns few results. Full hybrid (e.g. BM25 + vector fusion) can be added later.
         """
         fetch_k = max(top_k * 2, 10)
         docs = self._store.similarity_search(query, k=min(fetch_k, 100))
+        if self._use_faiss:
+            docs = [d for d in docs if not d.metadata.get("__placeholder")]
         return docs[:top_k]
 
     @property
-    def store(self) -> Chroma:
-        """Expose underlying Chroma store for advanced use (e.g. direct filters)."""
+    def store(self) -> Any:
+        """Expose underlying store for advanced use."""
         return self._store

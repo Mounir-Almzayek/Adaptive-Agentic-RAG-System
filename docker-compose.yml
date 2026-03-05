@@ -1,0 +1,32 @@
+# Adaptive Agentic RAG — Streamlit UI + MCP API
+# From project root: docker compose up -d
+# Streamlit: http://localhost:8501  |  MCP API: http://localhost:8000
+
+services:
+  streamlit:
+    build: .
+    container_name: adaptive-rag-streamlit
+    ports:
+      - "8501:8501"
+    env_file: .env
+    environment:
+      - VECTOR_STORE_PATH=/app/data/vector_store
+    volumes:
+      - ./data:/app/data
+      - ./.env:/app/.env:ro
+    command: ["streamlit", "run", "adaptive_rag/app/streamlit_app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+    restart: unless-stopped
+
+  mcp:
+    build: .
+    container_name: adaptive-rag-mcp
+    ports:
+      - "8000:8000"
+    env_file: .env
+    environment:
+      - VECTOR_STORE_PATH=/app/data/vector_store
+    volumes:
+      - ./data:/app/data
+      - ./.env:/app/.env:ro
+    command: ["uvicorn", "adaptive_rag.mcp.mcp_server:app", "--host", "0.0.0.0", "--port", "8000"]
+    restart: unless-stopped

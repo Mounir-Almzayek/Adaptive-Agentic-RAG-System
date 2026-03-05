@@ -4,6 +4,10 @@
 
 A production-ready, model-agnostic RAG (Retrieval-Augmented Generation) system with adaptive retrieval, conversation memory, tool orchestration, and MCP compatibility. Built for scalability and portfolio/SaaS readiness.
 
+### Screenshot
+
+![Streamlit UI — Adaptive Agentic RAG](docs/screenshots/Screen.png)
+
 ---
 
 ## Documentation (Planning Phase)
@@ -62,4 +66,4 @@ PYTHONPATH=. python -m pytest tests/ -v -m smoke
 
 Note: Chroma tests are skipped on Python 3.14 due to chromadb/pydantic compatibility; use Python 3.11–3.12 for full RAG tests.
 
-**All phases complete.** See [docs/RUNNING.md](docs/RUNNING.md) to run the Streamlit UI and MCP API.
+**All phases complete.** See [docs/RUNNING.md](docs/RUNNING.md) to run the Streamlit UI and MCP API. For Docker: `docker compose up -d --build` (Streamlit on 8501, MCP on 8000).

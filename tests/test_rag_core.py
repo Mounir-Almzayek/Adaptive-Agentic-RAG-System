@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pytest
 
-# Skip embedding-dependent tests if optional RAG deps are missing or broken (e.g. chromadb on Python 3.14)
+# Skip embedding-dependent tests if embeddings + (Chroma or FAISS) unavailable
 def _check_rag_deps() -> bool:
     try:
         from langchain_community.embeddings import HuggingFaceEmbeddings  # noqa: F401
@@ -19,9 +19,14 @@ def _check_rag_deps() -> bool:
         return False
     try:
         from langchain_chroma import Chroma  # noqa: F401
+        return True
+    except Exception:
+        pass
+    try:
+        from langchain_community.vectorstores import FAISS  # noqa: F401
+        return True
     except Exception:
         return False
-    return True
 
 
 _RAG_DEPS_AVAILABLE = _check_rag_deps()

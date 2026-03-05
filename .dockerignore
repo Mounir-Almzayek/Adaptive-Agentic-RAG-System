@@ -1,0 +1,46 @@
+# Git and env (use env_file or mount .env at run)
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.venv
+venv
+ENV
+
+# Build and install
+build
+dist
+*.egg-info
+.eggs
+eggs
+
+# Data (mount as volume at runtime for persistence)
+data/
+
+# IDE and OS
+.idea
+.vscode
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Docs and tests (not needed in runtime image)
+docs/
+tests/
+scripts/
+*.md
+!README.md
+
+# Misc
+*.log
+.cache
+tmp
+temp

@@ -7,7 +7,31 @@ All logic is delegated to RAGService and IngestionService (built via app_factory
 
 from __future__ import annotations
 
+import warnings
+from pathlib import Path
+
+# Suppress LangChain/Pydantic v1 warning on Python 3.14 (upstream; harmless)
+warnings.filterwarnings(
+    "ignore",
+    message=".*Pydantic V1 functionality isn't compatible with Python 3.14.*",
+    module="langchain_core",
+)
+
 import streamlit as st
+
+# Load .env from project root before any RAG code runs (so OPENROUTER_API_KEY is set)
+try:
+    from dotenv import load_dotenv
+
+    _app_dir = Path(__file__).resolve().parent
+    _project_root = _app_dir.parent.parent
+    load_dotenv(_project_root / ".env")
+    # Clear settings cache so next get_settings() sees the loaded env
+    from adaptive_rag.config.settings import get_settings
+
+    get_settings.cache_clear()
+except Exception:
+    pass
 
 # Session state keys
 KEY_MESSAGES = "messages"
@@ -36,7 +60,13 @@ def _ensure_services():
         st.session_state[KEY_INGESTION_SERVICE] = ingestion_service
         return rag_service, ingestion_service
     except Exception as e:
-        st.error(f"Failed to load RAG: {e}. Check OPENROUTER_API_KEY in .env.")
+        err = str(e)
+        hint = (
+            "1. **Save your `.env` file:** Open the `.env` file in the project root, "
+            "add your key: `OPENROUTER_API_KEY=sk-or-v1-...`, and save (Ctrl+S).\n\n"
+        )
+        hint += "2. Reload the page after saving `.env`."
+        st.error(f"**Failed to load RAG**\n\n{err}\n\n---\n{hint}")
         return None, None
 
 
