@@ -43,7 +43,8 @@ adaptive_rag/
 
 ## Status
 
-**Phase 1 (Foundation)** — Done. Config, model factory (OpenRouter + LangChain), and tests in place.
+**Phase 1 (Foundation)** — Done. Config, model factory (OpenRouter + LangChain), tests.  
+**Phase 2 (RAG Core)** — Done. Vector store (Chroma), ingestion (PDF/txt/md), retrieval engine (vector/hybrid/adaptive), adaptive router, optional reranker.
 
 ### Run tests (from repo root)
 
@@ -56,4 +57,6 @@ PYTHONPATH=. python -m pytest tests/ -v -m smoke
 # Or: PYTHONPATH=. python scripts/smoke_llm.py
 ```
 
-Next: **Phase 2 – RAG Core** and/or **Phase 3 – Agent & Memory**.
+Note: Chroma tests are skipped on Python 3.14 due to chromadb/pydantic compatibility; use Python 3.11–3.12 for full RAG tests.
+
+Next: **Phase 3 – Agent & Memory**, then **Phase 4 – Service Layer**.

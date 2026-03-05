@@ -30,10 +30,27 @@ class Settings(BaseSettings):
     default_provider: str = "openrouter"
     default_model: str = "google/gemini-2.0-flash-exp"
 
-    # --- RAG (used in later phases) ---
+    # --- RAG (Phase 2+) ---
     retrieval_strategy: RetrievalStrategy = "adaptive"
     vector_store_path: str = "./data/vector_store"
     default_embedding_model: str | None = None
+    chunk_size: int = 1000
+    chunk_overlap: int = 200
+    adaptive_retrieval_min_docs: int = 3
+
+    @field_validator("chunk_size", "chunk_overlap")
+    @classmethod
+    def positive_int(cls, v: int) -> int:
+        if isinstance(v, int) and v > 0:
+            return v
+        raise ValueError("chunk_size and chunk_overlap must be positive")
+
+    @field_validator("adaptive_retrieval_min_docs")
+    @classmethod
+    def non_negative_int(cls, v: int) -> int:
+        if isinstance(v, int) and v >= 0:
+            return v
+        raise ValueError("adaptive_retrieval_min_docs must be non-negative")
 
     @field_validator("openrouter_api_key", mode="before")
     @classmethod

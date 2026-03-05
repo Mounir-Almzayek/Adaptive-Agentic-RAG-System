@@ -65,12 +65,12 @@
 
 ## Acceptance Criteria
 
-- [ ] Vector store persists and can be populated via ingestion service.
-- [ ] Ingestion service loads PDF and/or text, chunks, and indexes.
-- [ ] RetrievalEngine.retrieve() works for `vector`, `hybrid`, and `adaptive` strategies.
-- [ ] Adaptive strategy uses a simple fallback (e.g. low result count → hybrid).
-- [ ] Optional reranker integrates without breaking existing retrieval flow.
-- [ ] All components use LangChain where applicable (loaders, splitters, vectorstore).
+- [x] Vector store persists and can be populated via ingestion service.
+- [x] Ingestion service loads PDF and/or text (and .md), chunks, and indexes.
+- [x] RetrievalEngine.retrieve() works for `vector`, `hybrid`, and `adaptive` strategies.
+- [x] Adaptive strategy uses a simple fallback (low result count → hybrid via `choose_strategy`).
+- [x] Optional reranker integrates without breaking existing retrieval flow.
+- [x] All components use LangChain where applicable (loaders, splitters, vectorstore).
 
 ---
 
