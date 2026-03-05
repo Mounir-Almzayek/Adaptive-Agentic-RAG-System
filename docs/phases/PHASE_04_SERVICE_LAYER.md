@@ -59,11 +59,11 @@
 
 ## Acceptance Criteria
 
-- [ ] RAGService.ask(query) returns a response using retrieval + memory + agent.
-- [ ] Memory is updated after each successful ask.
-- [ ] Optional self_check and one corrective retry implemented and toggleable via `enable_self_check`.
-- [ ] No Streamlit or FastAPI imports in RAGService; only core/rag/memory dependencies.
-- [ ] Agent’s “search knowledge” tool (if any) uses real retrieval when wired from the app.
+- [x] RAGService.ask(query) returns a response (RAGResponse) using retrieval + memory + agent.
+- [x] Memory is updated after each successful ask.
+- [x] Optional self_check and one corrective retry implemented and toggleable via `enable_self_check`.
+- [x] No Streamlit or FastAPI imports in RAGService; only core/rag/memory dependencies.
+- [x] Agent’s “search knowledge” tool uses real retrieval when built via build_rag_service / app_factory (make_search_knowledge_tool).
 
 ---
 
