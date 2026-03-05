@@ -1,0 +1,17 @@
+# Adaptive Agentic RAG System — dependencies
+# Install: pip install -r requirements.txt
+# Phase 1+: core + config
+langchain>=0.3.0
+langchain-openai>=0.2.0
+langchain-community>=0.3.0
+pydantic>=2.0
+pydantic-settings>=2.0
+python-dotenv>=1.0.0
+
+# Phase 2+: RAG (adjust if using Chroma vs FAISS)
+chromadb>=0.4.0
+
+# Phase 4/5: app and MCP
+streamlit>=1.28.0
+fastapi>=0.115.0
+uvicorn>=0.30.0
