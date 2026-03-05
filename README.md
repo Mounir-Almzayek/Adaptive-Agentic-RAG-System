@@ -46,7 +46,8 @@ adaptive_rag/
 **Phase 1 (Foundation)** — Done. Config, model factory (OpenRouter + LangChain), tests.  
 **Phase 2 (RAG Core)** — Done. Vector store (Chroma), ingestion (PDF/txt/md), retrieval engine (vector/hybrid/adaptive), adaptive router, optional reranker.  
 **Phase 3 (Agent & Memory)** — Done. ConversationMemory, ToolRegistry (calculator, search_knowledge stub), create_agent (tool-calling loop with context + knowledge_docs).  
-**Phase 4 (Service Layer)** — Done. RAGService.ask(), RAGResponse, self_check, CRAG-style corrective retry, build_rag_service (search_knowledge wired to retrieval).
+**Phase 4 (Service Layer)** — Done. RAGService.ask(), RAGResponse, self_check, CRAG-style corrective retry, build_rag_service (search_knowledge wired to retrieval).  
+**Phase 5 (UI & MCP)** — Done. Streamlit chat + ingestion upload + clear memory; FastAPI /ask and /tool/search_knowledge with CORS.
 
 ### Run tests (from repo root)
 
@@ -61,4 +62,4 @@ PYTHONPATH=. python -m pytest tests/ -v -m smoke
 
 Note: Chroma tests are skipped on Python 3.14 due to chromadb/pydantic compatibility; use Python 3.11–3.12 for full RAG tests.
 
-Next: **Phase 5 – UI & MCP** (Streamlit, FastAPI).
+**All phases complete.** See [docs/RUNNING.md](docs/RUNNING.md) to run the Streamlit UI and MCP API.

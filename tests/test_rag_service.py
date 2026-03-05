@@ -204,3 +204,22 @@ def test_make_search_knowledge_tool_empty_retrieval():
     tool = make_search_knowledge_tool(MockRetrieval())
     out = tool.invoke({"query": "test"})
     assert "No relevant" in out
+
+
+# --- Phase 5: FastAPI app (route presence only; no RAG build) ---
+
+
+@pytest.mark.unit
+def test_mcp_app_has_ask_and_health_routes():
+    from fastapi.testclient import TestClient
+
+    from adaptive_rag.mcp.mcp_server import app
+
+    client = TestClient(app)
+    # Health does not require RAG to be loaded
+    r = client.get("/health")
+    assert r.status_code == 200
+    assert r.json() == {"status": "ok"}
+    # /ask with body; may return 503 if RAG failed to build at startup
+    r2 = client.post("/ask", json={"query": "test"})
+    assert r2.status_code in (200, 503)

@@ -55,6 +55,10 @@ class RAGService:
         self._default_top_k = default_top_k
         self._max_corrective_retries = max(0, max_corrective_retries)
 
+    def clear_memory(self) -> None:
+        """Clear conversation memory for a new session. Keeps RAGService and agent."""
+        self._memory.clear()
+
     def ask(
         self,
         query: str,

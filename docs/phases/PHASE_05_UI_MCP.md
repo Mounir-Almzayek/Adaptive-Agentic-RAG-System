@@ -54,12 +54,12 @@
 
 ## Acceptance Criteria
 
-- [ ] Streamlit app runs and displays chat; user can send a message and get a response from RAGService.
-- [ ] File upload triggers ingestion into the vector store (and user sees success/error).
-- [ ] Provider/model and retrieval strategy can be selected from UI or config.
-- [ ] FastAPI app exposes at least one RAG endpoint; calling it returns the same kind of answer as the UI.
-- [ ] No business logic in Streamlit beyond calling service and ingestion; no business logic in MCP beyond calling RAGService.
-- [ ] Running instructions are documented.
+- [x] Streamlit app runs and displays chat; user can send a message and get a response from RAGService.
+- [x] File upload triggers ingestion into the vector store (and user sees success/error).
+- [x] Retrieval strategy selectable in sidebar; config (model, etc.) from .env.
+- [x] FastAPI app exposes /ask and /tool/search_knowledge; calling returns answer + metadata.
+- [x] No business logic in Streamlit beyond calling service and ingestion; no business logic in MCP beyond calling RAGService.
+- [x] Running instructions in docs/RUNNING.md.
 
 ---
 
